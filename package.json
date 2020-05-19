@@ -1,0 +1,71 @@
+{
+  "name": "@mpecarina/koa-template",
+  "version": "1.1.47",
+  "description": "koa typescript template",
+  "keywords": [
+    "koa",
+    "template",
+    "docker"
+  ],
+  "main": "dist/index.js",
+  "types": "types/koa-template.d.ts",
+  "repository": {
+    "url": "https://github.com/mpecarina/koa-template"
+  },
+  "scripts": {
+    "build": "rm -rf dist/ && ./node_modules/typescript/bin/tsc && ./node_modules/prettier/bin-prettier.js --write 'dist/**/*.js'",
+    "dev": "nodemon --watch 'src/**/*.ts'--watch 'routes.json' --watch 'types/*.d.ts' --exec './node_modules/ts-node/dist/bin.js' src/index.ts",
+    "lint": "./node_modules/eslint/bin/eslint.js src/**/*.ts --fix",
+    "publish:cd": "yarn lint && yarn build && yarn publish",
+    "release:patch": "yarn lint && yarn build && release patch",
+    "release:minor": "yarn lint && yarn build && release minor",
+    "release:major": "yarn lint && yarn build && release major",
+    "start": "node dist/index.js",
+    "test": "jest test/unit --verbose --passWithNoTests"
+  },
+  "author": "mpecarina",
+  "license": "MIT",
+  "dependencies": {
+    "koa": "^2.7.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-json": "^2.0.2",
+    "koa-passport": "^4.1.1",
+    "koa-pug": "^3.0.0-2",
+    "koa-router": "^7.4.0",
+    "koa-session": "^5.10.1",
+    "koa-static-server": "^1.4.0",
+    "koa2-winston": "^3.1.1",
+    "node-vault": "^0.9.6",
+    "prom-client": "^11.3.0",
+    "prometheus-api-metrics": "^2.2.2",
+    "yargs": "^13.2.2"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.22.0",
+    "@typescript-eslint/parser": "^2.22.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-config-typescript": "^3.0.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "googleapis": "^47.0.0",
+    "prettier": "^1.19.1",
+    "@types/koa": "^2.0.48",
+    "@types/koa-bodyparser": "^4.2.2",
+    "@types/koa-json": "^2.0.18",
+    "@types/koa-passport": "^4.0.2",
+    "@types/koa-pug": "^3.0.4",
+    "@types/koa-router": "^7.0.40",
+    "@types/koa-session": "^5.10.0",
+    "@types/koa-static-server": "^1.3.0",
+    "@types/node": "^11.13.8",
+    "@types/node-vault": "^0.5.3",
+    "jest": "^24.7.1",
+    "nodemon": "^1.18.11",
+    "pre-commit": "^1.2.2",
+    "release-script": "^1.0.2",
+    "ts-node": "^8.0.3",
+    "tslint": "^5.15.0",
+    "tslint-config-standard": "^8.0.1",
+    "typescript": "^3.4.3"
+  }
+}
