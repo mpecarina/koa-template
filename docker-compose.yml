@@ -1,19 +1,4 @@
 services:
-  nodejs:
-    image: node:latest
-    ports:
-      - 3000:3000
-    volumes:
-      - ./:/gcloudwalk
-    links:
-      - postgres
-    environment:
-      DB_NAME: postgres
-      DB_HOST: postgres
-    working_dir: /gcloudwalk
-    command: >
-      sh -c "yarn && yarn lint && yarn build && yarn dev"
-
   postgres:
     image: postgres:latest
     restart: always
@@ -54,11 +39,10 @@ services:
       - APP_NAME=koa-template
       - APP_PORT_0=3000
       - APP_PORT_1=3001
-      - SECRET_KEY=sS3cr3tkK3ys
+      - SECRET_KEY=sS3cr3tkK3ySs
     working_dir: /koa-template
     command: >
       sh -c "yarn
       && yarn mock
       && yarn build
       && yarn dev"
-
