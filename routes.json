@@ -1,35 +1,16 @@
 [
-    {
-        "name": "health-check",
-        "version": "v1",
-        "description": "",
-        "method": [
-            "get"
-        ],
-        "route": "/ping",
-        "body": {
-            "msg": "pong"
-        },
-        "template": "",
-        "auth": {
-            "required": false
-        }
+  {
+    "name": "health-check",
+    "version": "v1",
+    "description": "",
+    "method": ["get"],
+    "route": "/ping",
+    "body": {
+      "msg": "pong"
     },
-    {
-        "name": "wildcard-route",
-        "version": "v1",
-        "description": "",
-        "method": [
-            "get",
-            "post",
-            "put",
-            "patch",
-            "delete"
-        ],
-        "route": "/*",
-        "template": "",
-        "auth": {
-            "required": false
-        }
+    "controller": "",
+    "auth": {
+      "required": false
     }
+  }
 ]

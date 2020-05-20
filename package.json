@@ -14,7 +14,7 @@
   },
   "scripts": {
     "build": "rm -rf dist/ && ./node_modules/typescript/bin/tsc && ./node_modules/prettier/bin-prettier.js --write 'dist/**/*.js'",
-    "dev": "nodemon --watch 'src/**/*.ts'--watch 'routes.json' --watch 'types/*.d.ts' --exec './node_modules/ts-node/dist/bin.js' src/index.ts",
+    "dev": "nodemon --watch 'src/**/*.ts' --watch 'routes.json' --watch 'types/*.d.ts' --exec './node_modules/ts-node/dist/bin.js' src/index.ts",
     "lint": "./node_modules/eslint/bin/eslint.js src/**/*.ts --fix",
     "publish:cd": "yarn lint && yarn build && yarn publish",
     "release:patch": "yarn lint && yarn build && release patch",
