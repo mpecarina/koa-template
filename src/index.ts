@@ -32,7 +32,7 @@ export const initApps = (middleware: Koa.Middleware[]): Koa[] => {
   }
   app.use(
     require("koa-static-server")({
-      rootDir: process.env.STATIC_DIR || "../../../../dist",
+      rootDir: process.env.STATIC_DIR,
       rootPath: process.env.ROOT_PATH || "/",
     }),
   )
