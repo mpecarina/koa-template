@@ -8,7 +8,7 @@ import { inspect } from "util"
 /**
  * Exports package.json for test.
  */
-export let pkg: object
+export let pkg: any
 
 try {
   pkg = loadJSON("./package.json")
@@ -32,7 +32,7 @@ export const initApps = (middleware: Koa.Middleware[]): Koa[] => {
   }
   app.use(
     require("koa-static-server")({
-      rootDir: process.env.STATIC_DIR,
+      rootDir: process.env.STATIC_DIR || `./dist/${pkg.name}`,
       rootPath: process.env.ROOT_PATH || "/",
     }),
   )
