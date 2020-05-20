@@ -1,6 +1,6 @@
 {
   "name": "@mpecarina/koa-template",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "koa typescript template",
   "keywords": [
     "koa",
