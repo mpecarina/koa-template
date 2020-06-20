@@ -20,7 +20,6 @@ export let pkg: any
 
 try {
   pkg = loadJSON("./package.json")
-  console.log(pkg)
 } catch (err) {
   console.log(err)
   pkg = {}
@@ -70,8 +69,8 @@ export const inspectObj = (obj: object): any => {
  * @returns {Koa[]} Array containing the apps.
  */
 export const initApps = (middleware: Koa.Middleware[]): Koa[] => {
-  metricsApp = new Koa().use(koaPrometheus())
-  app = new Koa()
+  const app = new Koa()
+  const metricsApp = new Koa().use(koaPrometheus())
   if (middleware) {
     middleware.forEach((m: Koa.Middleware) => {
       app.use(m)
