@@ -18,6 +18,44 @@ try {
 }
 
 /**
+ * Sort properties of an object alphabetically by key.
+ * @param {object[]} obj
+ * @param {number|null} limit
+ * @returns Array of sorted properties.
+ */
+export const sortProperties = (obj: object[], limit: number | null = null) => {
+  const sortable = []
+  for (const key in obj) {
+    // eslint-disable-next-line no-prototype-builtins
+    if (obj.hasOwnProperty(key)) {
+      sortable.push([key, obj[key]])
+    }
+  }
+  sortable.sort((a, b): any => {
+    try {
+      const x = a[1]
+      const y = b[1]
+      return x < y ? -1 : x > y ? 1 : 0
+    } catch (err) {
+      console.log(err)
+    }
+  })
+  if (!limit) {
+    return sortable
+  }
+  return sortable.slice(Number(-limit))
+}
+
+/**
+ * Inspect nested object properties.
+ * @param {object} obj Object to inspect.
+ * @returns {string} Recursive properties.
+ */
+export const inspectObj = (obj: object): any => {
+  return inspect(obj, { colors: true, depth: null })
+}
+
+/**
  * Initializes the basic and metrics apps.
  * @param {Koa.Middleware[]|null} middleware
  * @returns {Koa[]} Array containing the apps.
@@ -60,42 +98,4 @@ if (!module.parent) {
     console.log(err)
     process.exit(1)
   }
-}
-
-/**
- * Sort properties of an object alphabetically by key.
- * @param {object[]} obj
- * @param {number|null} limit
- * @returns Array of sorted properties.
- */
-export const sortProperties = (obj: object[], limit: number | null = null) => {
-  let sortable = []
-  for (const key in obj) {
-    // eslint-disable-next-line no-prototype-builtins
-    if (obj.hasOwnProperty(key)) {
-      sortable.push([key, obj[key]])
-    }
-  }
-  sortable.sort((a, b): any => {
-    try {
-      const x = a[1]
-      const y = b[1]
-      return x < y ? -1 : x > y ? 1 : 0
-    } catch (err) {
-      console.log(err)
-    }
-  })
-  if (!limit) {
-    return sortable
-  }
-  return sortable.slice(Number(-limit))
-}
-
-/**
- * Inspect nested object properties.
- * @param {object} obj Object to inspect.
- * @returns {string} Recursive properties.
- */
-export const inspectObj = (obj: object): string => {
-  return inspect(obj, { colors: true, depth: null })
 }

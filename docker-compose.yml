@@ -1,32 +1,5 @@
+version: "3.7"
 services:
-  postgres:
-    image: postgres:latest
-    restart: always
-    volumes:
-      - ./postgres_data:/var/lib/postgresql/data
-    ports:
-      - 5432:5432
-
-  hasura:
-    image: hasura/graphql-engine:latest
-    ports:
-      - "8081:8080"
-    depends_on:
-      - postgres
-    restart: always
-    environment:
-      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:@postgres:5432/postgres
-      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
-      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
-
-  vault:
-    image: vault:latest
-    ports:
-      - 8200:8200
-    environment:
-      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
-      - VAULT_DEV_ROOT_TOKEN_ID=${VAULT_ROOT_TOKEN}
-
   nodejs:
     build: .
     ports:
@@ -39,10 +12,8 @@ services:
       - APP_NAME=koa-template
       - APP_PORT_0=3000
       - APP_PORT_1=3001
-      - SECRET_KEY=sS3cr3tkK3ySs
     working_dir: /koa-template
     command: >
-      sh -c "yarn
-      && yarn mock
-      && yarn build
-      && yarn dev"
+      sh -c "yarn &&
+      yarn build &&
+      yarn dev"

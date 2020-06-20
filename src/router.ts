@@ -33,32 +33,17 @@ export const koaRouter = (path = "./routes.json"): Router.IMiddleware => {
   }
   routes.forEach((r: any) => {
     r.method.forEach((m: any) => {
+      const handler = eval(`require("./controllers/${r.name}").${r.handler}`)
       if (m.match("post", "i")) {
-        router.post(r.route, async (ctx) => {
-          try {
-            ctx.body = JSON.parse(ctx.request.rawBody)
-          } catch (err) {
-            if (err.message.includes("Unexpected")) {
-              ctx.body = ctx.request
-            }
-          }
-        })
+        router.post(r.route, handler)
       } else if (m.match("get", "i")) {
-        router.get(r.route, async (ctx) => {
-          ctx.body = r.body || r
-        })
+        router.get(r.route, handler)
       } else if (m.match("put", "i")) {
-        router.put(r.route, async (ctx) => {
-          ctx.body = r.body || r
-        })
+        router.put(r.route, handler)
       } else if (m.match("patch", "i")) {
-        router.patch(r.route, async (ctx) => {
-          ctx.body = r.body || r
-        })
+        router.patch(r.route, handler)
       } else if (m.match("delete", "i")) {
-        router.delete(r.route, async (ctx) => {
-          ctx.body = r.body || r
-        })
+        router.delete(r.route, handler)
       }
     })
   })

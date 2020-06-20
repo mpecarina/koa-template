@@ -5,9 +5,7 @@
     "description": "",
     "method": ["get"],
     "route": "/ping",
-    "body": {
-      "msg": "pong"
-    },
+    "handler": "ping",
     "controller": "",
     "auth": {
       "required": false
