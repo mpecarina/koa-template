@@ -33,7 +33,7 @@ export const koaRouter = (routesPath?: string, controllerPath?: string): Router.
   }
   routes.forEach((r: any) => {
     r.method.forEach((m: any) => {
-      const handler = eval(`require("${controllerPath || "./controllers.json"}/${r.controller}").${r.handler}`)
+      const handler = eval(`require("${controllerPath || "./controllers"}/${r.controller}").${r.handler}`)
       if (m.match("post", "i")) {
         router.post(r.route, handler)
       } else if (m.match("get", "i")) {
