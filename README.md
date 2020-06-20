@@ -21,12 +21,13 @@ static files are served at `"/"` from the directory `"dist/${pkg.name}"` where `
 
 ### routes.json
 
-optionally create a `routes.json` file (health check endpoint is enabled for static servers by default when no `routes.json` file is present but can be recreated with additional routes)
+optionally create a `routes.json` file. a health check endpoint is enabled for static servers by default when no `routes.json` file is present but can be recreated with additional routes
 
 ```json
 [
   {
-    "name": "test",
+    "name": "health-check",
+    "controller": "health-check",
     "version": "v1",
     "description": "",
     "method": ["get"],
@@ -39,9 +40,7 @@ optionally create a `routes.json` file (health check endpoint is enabled for sta
 ]
 ```
 
-create a controllers directory in the application `src` folder
-
-create a route handler function in the controller file `controllers/health-check.ts`
+create a function matching the handler value in `routes.json` in the controllers file `controllers/health-check.ts`
 
 ```js
 export const ping = async (ctx: any) => {

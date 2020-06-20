@@ -36,7 +36,7 @@ export const koaRouter = (routesPath: string = "./routes.json"): Router.IMiddlew
     r.method.forEach((m: any) => {
       let handler
       try {
-        const controllerPath = path.join(__dirname, "./controllers")
+        const controllerPath = path.join(__dirname, "../../../../controllers")
         handler = eval(`require("${controllerPath}/${r.controller}").${r.handler}`)
       } catch (e) {
         handler = eval(`require("./controllers/${r.controller}").${r.handler}`)
