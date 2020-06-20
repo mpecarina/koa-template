@@ -8,10 +8,10 @@ import { inspect } from "util"
 /**
  * Exports main application.
  */
-module.exports.logger = logger
-module.exports.koaRouter = koaRouter
-module.exports.bodyParser = bodyParser
-module.exports.json = json
+exports.logger = logger
+exports.koaRouter = koaRouter
+exports.bodyParser = bodyParser
+exports.json = json
 
 /**
  * Exports package.json for test.
@@ -20,6 +20,7 @@ export let pkg: any
 
 try {
   pkg = loadJSON("./package.json")
+  console.log(pkg)
 } catch (err) {
   console.log(err)
   pkg = {}
