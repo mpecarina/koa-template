@@ -1,14 +1,10 @@
 {
-    "extends": "tslint-config-standard",
-    "rules": {
-        "ter-indent": [
-            true,
-            4
-        ],
-        "quotemark": [
-            true,
-            "double",
-            "avoid-escape"
-        ]
-    }
+  "extends": "tslint-config-standard",
+  "rules": {
+    "quotemark": [
+      true,
+      "double",
+      "avoid-escape"
+    ]
+  }
 }

@@ -13,9 +13,9 @@
     "url": "https://github.com/mpecarina/koa-template"
   },
   "scripts": {
-    "build": "rm -rf dist/ && ./node_modules/typescript/bin/tsc && ./node_modules/prettier/bin-prettier.js --write 'dist/**/*.js'",
+    "build": "rm -rf dist/ && ./node_modules/typescript/bin/tsc && ./node_modules/prettier/bin-prettier.js --write dist/**/*.js",
     "dev": "nodemon --watch 'src/**/*.ts' --watch 'routes.json' --watch 'types/*.d.ts' --exec './node_modules/ts-node/dist/bin.js' src/index.ts",
-    "lint": "./node_modules/eslint/bin/eslint.js src/**/*.ts --fix",
+    "lint": "./node_modules/eslint/bin/eslint.js src/**/*.ts --fix && ./node_modules/prettier/bin-prettier.js --write src/**/*.ts",
     "publish:cd": "yarn lint && yarn build && yarn publish",
     "release:patch": "yarn lint && yarn build && release patch",
     "release:minor": "yarn lint && yarn build && release minor",
