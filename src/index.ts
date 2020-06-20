@@ -6,7 +6,7 @@ import { logger, koaPrometheus } from "./middleware"
 import { inspect } from "util"
 
 /**
- * Exports main application.
+ * Exports default middleware.
  */
 exports.logger = logger
 exports.koaRouter = koaRouter
@@ -87,20 +87,16 @@ export const initApps = (middleware: Koa.Middleware[]): Koa[] => {
 }
 
 /**
- * Starts apps.
- */
-export let [app, metricsApp] = initApps([
-  logger(),
-  bodyParser(),
-  json({ pretty: false, param: "pretty", spaces: 4 }),
-  koaRouter(),
-])
-
-/**
  * Main application entrypoint.
  */
 if (!module.parent) {
   try {
+    const [app, metricsApp] = initApps([
+      logger(),
+      bodyParser(),
+      json({ pretty: false, param: "pretty", spaces: 4 }),
+      koaRouter(),
+    ])
     app.listen(process.env.APP_PORT_0 || 3000)
     metricsApp.listen(process.env.APP_PORT_1 || 3001)
   } catch (err) {
