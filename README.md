@@ -2,134 +2,49 @@
 
 ### install package:
 
-``` sh
-npm i -g yarn
+```sh
 yarn add @mpecarina/koa-template
 ```
 
 ### import and use:
-``` js
-const { app, metricsApp } = require("@mpecarina/koa-template")
+
+```js
+import { app, metricsApp } from "@mpecarina/koa-template"
 
 app.listen(process.env.APP_PORT_0 || 3000)
 metricsApp.listen(process.env.APP_PORT_1 || 3001)
 ```
 
-### with typescript:
-``` js
-import { app, metricsApp } from "@mpecarina/koa-template"
-```
+### static files
 
-### create routes.json in project:
-``` json
+static files are served at `"/"` from the directory `"dist/${pkg.name}"` where `pkg.name` is the name value in package.json
+
+### routes.json
+
+create a `routes.json` file with an example health check endpoint (this route is enabled for static servers by default when no `routes.json` file is present)
+
+```json
 [
-    {
-        "name": "example-endpoint",
-        "version": "v1",
-        "description": "",
-        "method": [
-            "get",
-            "post"
-        ],
-        "route": "/example",
-        "body": {
-            "msg": "example route"
-        },
-        "template": "",
-        "auth": {
-            "required": false
-        }
+  {
+    "name": "health-check",
+    "version": "v1",
+    "description": "",
+    "method": ["get"],
+    "route": "/ping",
+    "handler": "ping",
+    "auth": {
+      "required": false
     }
+  }
 ]
 ```
 
-``` http://localhost:3000/example ```
-``` json
-{"msg":"example route"}
-```
+create a controllers directory in the application `src` folder
 
-``` http://localhost:3001/metrics ```
-``` ini
-# HELP process_cpu_user_seconds_total Total user CPU time spent in seconds.
-# TYPE process_cpu_user_seconds_total counter
-process_cpu_user_seconds_total 0.040445 1556429207673
-...
-```
+create a route handler function in the controller file `controllers/health-check.ts`
 
-### or test with default routes:
-``` http://localhost:3000/uri?pretty ```
-``` json
-{
-    "name": "wildcard-route",
-    "version": "v1",
-    "description": "",
-    "method": [
-        "get",
-        "post",
-        "put",
-        "patch",
-        "delete"
-    ],
-    "route": "/*",
-    "template": "",
-    "auth": {
-        "required": false
-    }
+```js
+export const ping = async (ctx: any) => {
+  ctx.body = { msg: "pong" }
 }
-```
-
-``` http://localhost:3000/ping ```
-``` json
-{"msg":"pong"}
-```
-
-``` curl -X POST -H "application/json" -d '{"msg": "hello world"}' http://localhost:3000 ```
-``` json
-{"msg": "hello world"}
-```
-
-### directory structure:
-``` ini
-[bin]
-[coverage]
-[dist]
-[mocks]
-[node_modules]
-[src]
-    [lib]
-[test]
-    [unit]
-    [e2e]
-[types]
-.dockerignore
-.editorconfig
-.gitignore
-binci.yml
-docker-compose.yml
-Dockerfile
-Jenkinsfile
-package.json
-routes.json
-README.md
-tsconfig.json
-tslint.json
-yarn.lock
-```
-
-# development
-
-### set environment variables:
-``` ini
-NODE_ENV=development
-APP_NAME=koa-template
-APP_PORT_0=3000
-APP_PORT_1=3001
-SECRET_KEY=sS3cr3tkK3ySs
-```
-
-### getting started:
-``` sh
-npm i yarn -g
-yarn install
-yarn dev
 ```

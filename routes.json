@@ -1,12 +1,12 @@
 [
   {
     "name": "health-check",
+    "controller": "health-check",
     "version": "v1",
     "description": "",
     "method": ["get"],
     "route": "/ping",
     "handler": "ping",
-    "controller": "",
     "auth": {
       "required": false
     }

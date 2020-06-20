@@ -20,7 +20,7 @@ export const loadJSON = (path: string): any => {
  * @param path Path to routes file.
  * @returns {Koa.Middleware} Koa router middleware.
  */
-export const koaRouter = (path = "./routes.json"): Router.IMiddleware => {
+export const koaRouter = (path: string = "./routes.json"): Router.IMiddleware => {
   let routes
   try {
     routes = loadJSON(path)
@@ -33,7 +33,7 @@ export const koaRouter = (path = "./routes.json"): Router.IMiddleware => {
   }
   routes.forEach((r: any) => {
     r.method.forEach((m: any) => {
-      const handler = eval(`require("./controllers/${r.name}").${r.handler}`)
+      const handler = eval(`require("./controllers/${r.controller}").${r.handler}`)
       if (m.match("post", "i")) {
         router.post(r.route, handler)
       } else if (m.match("get", "i")) {
