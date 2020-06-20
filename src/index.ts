@@ -6,6 +6,14 @@ import { logger, koaPrometheus } from "./middleware"
 import { inspect } from "util"
 
 /**
+ * Exports main application.
+ */
+module.exports.logger = logger
+module.exports.koaRouter = koaRouter
+module.exports.bodyParser = bodyParser
+module.exports.json = json
+
+/**
  * Exports package.json for test.
  */
 export let pkg: any
