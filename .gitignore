@@ -32,3 +32,5 @@ ws-log-npm-report
 
 config/*.crt
 config/*.key
+
+koa-template-master*
