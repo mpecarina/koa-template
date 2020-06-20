@@ -4,7 +4,11 @@ declare const index: {
   app: any
   metricsApp: any
   inspectObj?: string
-  initApps?: object[]
+  initApps?: any
+  logger?: any
+  koaRouter?: any
+  bodyParser?: any
+  json?: any
   getSecret?: Promise<string>
   loadJSON?: object
   pkg?: object
