@@ -21,12 +21,12 @@ static files are served at `"/"` from the directory `"dist/${pkg.name}"` where `
 
 ### routes.json
 
-create a `routes.json` file with an example health check endpoint (this route is enabled for static servers by default when no `routes.json` file is present)
+optionally create a `routes.json` file (health check endpoint is enabled for static servers by default when no `routes.json` file is present but can be recreated with additional routes)
 
 ```json
 [
   {
-    "name": "health-check",
+    "name": "test",
     "version": "v1",
     "description": "",
     "method": ["get"],
