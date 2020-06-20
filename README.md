@@ -9,7 +9,18 @@ yarn add @mpecarina/koa-template
 ### import and use:
 
 ```js
-import { app, metricsApp } from "@mpecarina/koa-template"
+import { initApps, logger, bodyParser, json, koaRouter } from "@mpecarina/koa-template"
+import path from "path"
+
+const routes = path.join(__dirname, "../routes.json")
+const controllers = path.join(__dirname, "./controllers")
+
+const [app, metricsApp] = initApps([
+  logger(),
+  bodyParser(),
+  json({ pretty: false, param: "pretty", spaces: 4 }),
+  koaRouter(routes, controllers),
+])
 
 app.listen(process.env.APP_PORT_0 || 3000)
 metricsApp.listen(process.env.APP_PORT_1 || 3001)
