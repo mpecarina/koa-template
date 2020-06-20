@@ -2,7 +2,7 @@ import Koa from "koa"
 import bodyParser from "koa-bodyparser"
 import json from "koa-json"
 import { koaRouter, loadJSON } from "./router"
-import { logger, koaPrometheus, printUri } from "./middleware"
+import { logger, koaPrometheus } from "./middleware"
 import { inspect } from "util"
 
 /**
@@ -43,7 +43,6 @@ export const initApps = (middleware: Koa.Middleware[]): Koa[] => {
  * Starts apps.
  */
 export let [app, metricsApp] = initApps([
-  printUri(),
   logger(),
   bodyParser(),
   json({ pretty: false, param: "pretty", spaces: 4 }),
