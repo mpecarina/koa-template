@@ -1,6 +1,5 @@
 import Router from "koa-router"
 import { readFileSync } from "fs"
-import path from "path"
 
 /**
  * Exports router for tests.
@@ -21,10 +20,10 @@ export const loadJSON = (pkgPath: string): any => {
  * @param routesPath Path to routes file.
  * @returns {Koa.Middleware} Koa router middleware.
  */
-export const koaRouter = (routesPath: string = "./routes.json"): Router.IMiddleware => {
+export const koaRouter = (routesPath?: string, controllerPath?: string): Router.IMiddleware => {
   let routes
   try {
-    routes = loadJSON(routesPath)
+    routes = loadJSON(routesPath || "./routes.json")
   } catch (err) {
     if (err.code === "ENOENT") {
       routes = loadJSON("./node_modules/@mpecarina/koa-template/routes.json")
@@ -34,13 +33,7 @@ export const koaRouter = (routesPath: string = "./routes.json"): Router.IMiddlew
   }
   routes.forEach((r: any) => {
     r.method.forEach((m: any) => {
-      let handler
-      try {
-        const controllerPath = path.join(__dirname, "../../../../controllers")
-        handler = eval(`require("${controllerPath}/${r.controller}").${r.handler}`)
-      } catch (e) {
-        handler = eval(`require("./controllers/${r.controller}").${r.handler}`)
-      }
+      const handler = eval(`require("${controllerPath || "./controllers.json"}/${r.controller}").${r.handler}`)
       if (m.match("post", "i")) {
         router.post(r.route, handler)
       } else if (m.match("get", "i")) {
