@@ -26,13 +26,13 @@ app.listen(process.env.APP_PORT_0 || 3000)
 metricsApp.listen(process.env.APP_PORT_1 || 3001)
 ```
 
-### static files
+### serve static files
 
 static files are served at `"/"` from the directory `"dist/${pkg.name}"` where `pkg.name` is the name value in package.json
 
-### routes.json
+### create routes.json
 
-optionally create a `routes.json` file. a health check endpoint is enabled for static servers by default when no `routes.json` file is present but can be recreated with additional routes
+a health check endpoint is enabled for static servers by default at `/ping` when no `routes.json` file is present but can be recreated with additional routes by creating a `routes.json` file in the root of your package
 
 ```json
 [
