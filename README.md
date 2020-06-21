@@ -77,7 +77,7 @@ a health check endpoint is enabled for static servers by default at `/ping` when
 ]
 ```
 
-create a function matching the handler value in `routes.json` in the controllers file `controllers/health-check.ts`
+create a function matching the controller and handler values in `routes.json`. for this example bother handlers are in the controllers file `controllers/health-check.ts`
 
 ```js
 /* eslint-disable no-unused-vars */
