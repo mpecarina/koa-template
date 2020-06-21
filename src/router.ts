@@ -36,10 +36,10 @@ export const koaRouter = (routesPath?: string, controllersPath?: string): Router
   routes.forEach((r: any) => {
     r.method.forEach((m: any) => {
       let handler
-      if (r.proxy.enabled) {
+      if (r.forward.enabled) {
         handler = createForward({
           request: {
-            url: r.proxy.url,
+            url: r.forward.url,
             method: m,
             forwardHeaders: ["*"],
           },

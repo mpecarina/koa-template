@@ -2,7 +2,7 @@
   {
     "name": "health-check",
     "controller": "health-check",
-    "proxy": {
+    "forward": {
       "enabled": false,
       "url": "",
       "headers": []
