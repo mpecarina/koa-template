@@ -1,6 +1,4 @@
-export = index
-
-declare const index: {
+export const index: {
   app: any
   metricsApp: any
   inspectObj?: string

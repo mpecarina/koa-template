@@ -40,7 +40,7 @@ a health check endpoint is enabled for static servers by default at `/ping` when
     "name": "health-check",
     "controller": "health-check",
     "version": "v1",
-    "proxy": {
+    "forward": {
       "enabled": false,
       "url": "",
       "headers": []
@@ -50,14 +50,15 @@ a health check endpoint is enabled for static servers by default at `/ping` when
     "route": "/ping",
     "handler": "ping",
     "auth": {
-      "ldap": false
+      "ldap": false,
+      "sso": false
     }
   },
   {
     "name": "test",
     "controller": "health-check",
     "version": "v1",
-    "proxy": {
+    "forward": {
       "enabled": false,
       "url": "",
       "headers": []
@@ -67,7 +68,8 @@ a health check endpoint is enabled for static servers by default at `/ping` when
     "route": "/test",
     "handler": "test",
     "auth": {
-      "ldap": false
+      "ldap": false,
+      "sso": false
     }
   }
 ]
@@ -103,28 +105,47 @@ curl http://localhost:3000/ping?pretty
 }
 ```
 
-### proxy downstream requests and preserve headers
+### proxy downstream requests
 
-static files are served at `"/"` from the directory `"dist/${pkg.name}"` where `pkg.name` is the name value in package.json
+enable the proxy section for a route in `routes.json` and enter the url destination and preserve headers
 
 ```json
 [
   {
-    "name": "health-check",
-    "controller": "health-check",
+    "name": "prometheus",
+    "controller": "",
     "version": "v1",
-    "proxy": {
-      "enabled": false,
-      "url": "",
+    "forward": {
+      "enabled": true,
+      "url": "http://prometheus",
       "headers": []
     },
     "description": "",
-    "method": ["get"],
-    "route": "/ping",
+    "method": ["get", "post", "put", "update", "delete"],
+    "route": "/prom/*",
     "handler": "ping",
     "auth": {
-      "ldap": false
+      "ldap": false,
+      "sso": false
     }
-  }
+  },
+  {
+    "name": "kibana",
+    "controller": "",
+    "version": "v1",
+    "forward": {
+      "enabled": true,
+      "url": "http://kibana:5601",
+      "headers": []
+    },
+    "description": "",
+    "method": ["get", "post", "put", "update", "delete"],
+    "route": "/kibana/*",
+    "handler": "kibana",
+    "auth": {
+      "ldap": false,
+      "sso": false
+    }
+  },
 ]
 ```
