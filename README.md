@@ -85,7 +85,7 @@ curl http://localhost:3000/ping?pretty
 
 ```sh
 {
-    "msg": "pong",
-    "status": "success"
+  "msg": "pong",
+  "status": "success"
 }
 ```

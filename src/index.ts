@@ -93,7 +93,7 @@ if (!module.parent) {
     const [app, metricsApp] = initApps([
       logger(),
       bodyParser(),
-      json({ pretty: false, param: "pretty", spaces: 4 }),
+      json({ pretty: false, param: "pretty", spaces: 2 }),
       koaRouter(),
     ])
     app.listen(process.env.APP_PORT_0 || 3000)
