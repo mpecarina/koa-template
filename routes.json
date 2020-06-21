@@ -2,13 +2,18 @@
   {
     "name": "health-check",
     "controller": "health-check",
+    "proxy": {
+      "enabled": false,
+      "url": "",
+      "headers": []
+    },
     "version": "v1",
     "description": "",
     "method": ["get"],
     "route": "/ping",
     "handler": "ping",
     "auth": {
-      "required": false
+      "ldap": false
     }
   }
 ]

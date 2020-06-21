@@ -40,24 +40,34 @@ a health check endpoint is enabled for static servers by default at `/ping` when
     "name": "health-check",
     "controller": "health-check",
     "version": "v1",
+    "proxy": {
+      "enabled": false,
+      "url": "",
+      "headers": []
+    },
     "description": "",
     "method": ["get"],
     "route": "/ping",
     "handler": "ping",
     "auth": {
-      "required": false
+      "ldap": false
     }
   },
   {
     "name": "test",
     "controller": "health-check",
     "version": "v1",
+    "proxy": {
+      "enabled": false,
+      "url": "",
+      "headers": []
+    },
     "description": "",
     "method": ["get"],
     "route": "/test",
     "handler": "test",
     "auth": {
-      "required": false
+      "ldap": false
     }
   }
 ]
@@ -91,4 +101,30 @@ curl http://localhost:3000/ping?pretty
   "msg": "pong",
   "status": "success"
 }
+```
+
+### proxy downstream requests and preserve headers
+
+static files are served at `"/"` from the directory `"dist/${pkg.name}"` where `pkg.name` is the name value in package.json
+
+```json
+[
+  {
+    "name": "health-check",
+    "controller": "health-check",
+    "version": "v1",
+    "proxy": {
+      "enabled": false,
+      "url": "",
+      "headers": []
+    },
+    "description": "",
+    "method": ["get"],
+    "route": "/ping",
+    "handler": "ping",
+    "auth": {
+      "ldap": false
+    }
+  }
+]
 ```

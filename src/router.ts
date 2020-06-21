@@ -1,4 +1,6 @@
 import Router from "koa-router"
+import createForward from "koa-router-forward-request"
+
 import { readFileSync } from "fs"
 
 /**
@@ -33,7 +35,18 @@ export const koaRouter = (routesPath?: string, controllersPath?: string): Router
   }
   routes.forEach((r: any) => {
     r.method.forEach((m: any) => {
-      const handler = eval(`require("${controllersPath || "./controllers"}/${r.controller}").${r.handler}`)
+      let handler
+      if (r.proxy.enabled) {
+        handler = createForward({
+          request: {
+            url: r.proxy.url,
+            method: m,
+            forwardHeaders: ["*"],
+          },
+        })
+      } else {
+        handler = eval(`require("${controllersPath || "./controllers"}/${r.controller}").${r.handler}`)
+      }
       if (m.match("post", "i")) {
         router.post(r.route, handler)
       } else if (m.match("get", "i")) {
