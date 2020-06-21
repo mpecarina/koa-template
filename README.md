@@ -66,11 +66,14 @@ a health check endpoint is enabled for static servers by default at `/ping` when
 create a function matching the handler value in `routes.json` in the controllers file `controllers/health-check.ts`
 
 ```js
-export const ping = async (ctx: any) => {
+/* eslint-disable no-unused-vars */
+import { BaseContext } from "koa"
+
+export const ping = async (ctx: BaseContext) => {
   ctx.body = { msg: "pong", status: "success" }
 }
 
-export const test = async (ctx: any) => {
+export const test = async (ctx: BaseContext) => {
   ctx.body = { msg: "test", status: "success" }
 }
 ```
