@@ -1,6 +1,7 @@
 import axios from "axios"
 import { readFileSync } from "fs"
 import Router from "koa-router"
+import yaml from "js-yaml"
 
 /**
  * Ignore certificate errors.
@@ -22,6 +23,15 @@ export const loadJSON = (pkgPath: string): any => {
 }
 
 /**
+ * Load dictionary object from YAML.
+ * @param {string} pkgPath Path to file.
+ * @returns {object|Array} Parsed dictionary object.
+ */
+export const loadYAML = (pkgPath: string): any => {
+  return yaml.safeLoad(readFileSync(pkgPath, { encoding: "utf-8" }))
+}
+
+/**
  * Loads Koa routes from JSON description.
  * @param routesPath Path to routes file.
  * @returns {Koa.Middleware} Koa router middleware.
@@ -29,6 +39,9 @@ export const loadJSON = (pkgPath: string): any => {
 export const koaRouter = (routesPath?: string, controllersPath?: string): Router.IMiddleware => {
   let routes
   try {
+    if (routesPath?.match(".yaml") || routesPath?.match(".yml")) {
+      routes = loadYAML(routesPath)
+    }
     routes = loadJSON(routesPath || "./routes.json")
   } catch (err) {
     if (err.code === "ENOENT") {

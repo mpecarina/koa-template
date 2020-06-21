@@ -1,0 +1,16 @@
+- name: health-check
+  controller: health-check
+  proxy:
+    enabled: false
+    redirect: false
+    url: ""
+    headers: []
+  version: v1
+  description: ""
+  method:
+    - get
+  route: "/ping"
+  handler: ping
+  auth:
+    ldap: false
+    sso: false
