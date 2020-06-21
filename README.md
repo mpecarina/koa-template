@@ -30,7 +30,7 @@ metricsApp.listen(process.env.APP_PORT_1 || 3001)
 
 ### serve static files
 
-static files are served at `"/"` from the directory `"dist/${pkg.name}"` where `pkg.name` is the name value in package.json
+static files are served at `"/"` from the directory `"dist/${pkg.name}"` where `pkg.name` is the name value in package.json. in this example we override to the root of our repo in the `static` folder
 
 ### create routes.json
 
