@@ -47,6 +47,18 @@ a health check endpoint is enabled for static servers by default at `/ping` when
     "auth": {
       "required": false
     }
+  },
+  {
+    "name": "test",
+    "controller": "health-check",
+    "version": "v1",
+    "description": "",
+    "method": ["get"],
+    "route": "/test",
+    "handler": "test",
+    "auth": {
+      "required": false
+    }
   }
 ]
 ```
@@ -55,6 +67,25 @@ create a function matching the handler value in `routes.json` in the controllers
 
 ```js
 export const ping = async (ctx: any) => {
-  ctx.body = { msg: "pong" }
+  ctx.body = { msg: "pong", status: "success" }
+}
+
+export const test = async (ctx: any) => {
+  ctx.body = { msg: "test", status: "success" }
+}
+```
+
+curl http://localhost:3000/ping
+
+```sh
+{"msg":"pong","status":"success"}
+```
+
+curl http://localhost:3000/ping?pretty
+
+```sh
+{
+    "msg": "pong",
+    "status": "success"
 }
 ```
