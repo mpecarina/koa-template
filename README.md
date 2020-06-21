@@ -12,6 +12,8 @@ yarn add @mpecarina/koa-template
 import { initApps, logger, bodyParser, json, koaRouter } from "@mpecarina/koa-template"
 import path from "path"
 
+process.env.STATIC_DIR = path.join(__dirname, "../static")
+
 const routes = path.join(__dirname, "../routes.json")
 const controllers = path.join(__dirname, "./controllers")
 
@@ -153,3 +155,28 @@ enable the proxy section for a route in `routes.json` and enter the url destinat
   }
 ]
 ```
+
+### proxy downstream requests
+
+enable the proxy section for a route in `routes.json` and enter the url destination. kibana is an example transparent redirection while the postman example endpoint is set to `redirect: false`
+
+
+## access static files
+
+create a static folder and `index.html` file at `static/index.html`
+
+```html
+<!doctype html>
+<html>
+  <head>
+    <title>static file server</title>
+  </head>
+  <body>
+    <p>serving files at /</p>
+  </body>
+</html>
+```
+
+http://localhost:3000/
+
+http://localhost:3000/index.html
