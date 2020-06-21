@@ -40,8 +40,9 @@ a health check endpoint is enabled for static servers by default at `/ping` when
     "name": "health-check",
     "controller": "health-check",
     "version": "v1",
-    "forward": {
+    "proxy": {
       "enabled": false,
+      "redirect": false,
       "url": "",
       "headers": []
     },
@@ -58,8 +59,9 @@ a health check endpoint is enabled for static servers by default at `/ping` when
     "name": "test",
     "controller": "health-check",
     "version": "v1",
-    "forward": {
+    "proxy": {
       "enabled": false,
+      "redirect": false,
       "url": "",
       "headers": []
     },
@@ -107,45 +109,47 @@ curl http://localhost:3000/ping?pretty
 
 ### proxy downstream requests
 
-enable the proxy section for a route in `routes.json` and enter the url destination and preserve headers
+enable the proxy section for a route in `routes.json` and enter the url destination. kibana is an example transparent redirection while the postman example endpoint is set to `redirect: false`
 
 ```json
 [
   {
-    "name": "prometheus",
+    "name": "kibana",
     "controller": "",
     "version": "v1",
-    "forward": {
+    "proxy": {
       "enabled": true,
-      "url": "http://prometheus",
+      "redirect": true,
+      "url": "http://kibana:5601",
       "headers": []
     },
     "description": "",
-    "method": ["get", "post", "put", "update", "delete"],
-    "route": "/prom/*",
-    "handler": "ping",
+    "method": ["get"],
+    "route": "/kibana",
+    "handler": "",
     "auth": {
       "ldap": false,
       "sso": false
     }
   },
   {
-    "name": "kibana",
+    "name": "postman",
     "controller": "",
     "version": "v1",
-    "forward": {
+    "proxy": {
       "enabled": true,
-      "url": "http://kibana:5601",
+      "redirect": false,
+      "url": "https://postman-echo.com/get?foo1=bar1&foo2=bar2",
       "headers": []
     },
     "description": "",
-    "method": ["get", "post", "put", "update", "delete"],
-    "route": "/kibana/*",
-    "handler": "kibana",
+    "method": ["get"],
+    "route": "/postman",
+    "handler": "",
     "auth": {
       "ldap": false,
       "sso": false
     }
-  },
+  }
 ]
 ```

@@ -2,8 +2,9 @@
   {
     "name": "health-check",
     "controller": "health-check",
-    "forward": {
+    "proxy": {
       "enabled": false,
+      "redirect": false,
       "url": "",
       "headers": []
     },
@@ -13,7 +14,8 @@
     "route": "/ping",
     "handler": "ping",
     "auth": {
-      "ldap": false
+      "ldap": false,
+      "sso": false
     }
   }
 ]
