@@ -36,13 +36,14 @@ export const loadYAML = (pkgPath: string): any => {
  * @param routesPath Path to routes file.
  * @returns {Koa.Middleware} Koa router middleware.
  */
-export const koaRouter = (routesPath?: string, controllersPath?: string): Router.IMiddleware => {
+export const koaRouter = (routesPath: string = "./routes.yaml", controllersPath?: string): Router.IMiddleware => {
   let routes
   try {
-    if (routesPath?.match(".yaml") || routesPath?.match(".yml")) {
+    if (routesPath?.includes(".yaml") || routesPath?.includes(".yml")) {
       routes = loadYAML(routesPath)
+    } else {
+      routes = loadJSON(routesPath)
     }
-    routes = loadJSON(routesPath || "./routes.json")
   } catch (err) {
     if (err.code === "ENOENT") {
       routes = loadJSON("./node_modules/@mpecarina/koa-template/routes.json")
