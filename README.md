@@ -88,7 +88,7 @@ export const ping = async (ctx: BaseContext) => {
 }
 
 export const test = async (ctx: BaseContext) => {
-  ctx.body = { msg: "test", status: "success" }
+  ctx.body = { msg: "test response", status: "success" }
 }
 ```
 
