@@ -160,13 +160,12 @@ enable the proxy section for a route in `routes.json` and enter the url destinat
 
 enable the proxy section for a route in `routes.json` and enter the url destination. kibana is an example transparent redirection while the postman example endpoint is set to `redirect: false`
 
-
 ## access static files
 
 create a static folder and `index.html` file at `static/index.html`
 
 ```html
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
     <title>static file server</title>
@@ -180,3 +179,77 @@ create a static folder and `index.html` file at `static/index.html`
 http://localhost:3000/
 
 http://localhost:3000/index.html
+
+## koa-template also supports yaml
+
+optionally create routes in yaml file `routes.yaml` or `routes.yml`
+
+```yaml
+- name: health-check
+  controller: health-check
+  version: v1
+  proxy:
+    enabled: false
+    redirect: false
+    url: ""
+    headers: []
+  description: ""
+  method:
+    - get
+  route: "/ping"
+  handler: ping
+  auth:
+    ldap: false
+    sso: false
+
+- name: test
+  controller: health-check
+  version: v1
+  proxy:
+    enabled: false
+    redirect: false
+    url: ""
+    headers: []
+  description: ""
+  method:
+    - get
+  route: "/test"
+  handler: test
+  auth:
+    ldap: false
+    sso: false
+
+- name: kibana
+  controller: ""
+  version: v1
+  proxy:
+    enabled: true
+    redirect: true
+    url: http://kibana:5601
+    headers: []
+  description: ""
+  method:
+    - get
+  route: "/kibana"
+  handler: ""
+  auth:
+    ldap: false
+    sso: false
+
+- name: postman
+  controller: ""
+  version: v1
+  proxy:
+    enabled: true
+    redirect: false
+    url: https://postman-echo.com/get?foo1=bar1&foo2=bar2
+    headers: []
+  description: ""
+  method:
+    - get
+  route: "/postman"
+  handler: ""
+  auth:
+    ldap: false
+    sso: false
+```
