@@ -13,14 +13,15 @@ import { initApps, logger, bodyParser, json, koaRouter } from "@mpecarina/koa-te
 import path from "path"
 
 process.env.STATIC_DIR = path.join(__dirname, "../static")
+process.env.STATIC_PATH = "/"
 
-const routes = path.join(__dirname, "../routes.json")
+const routes = path.join(__dirname, "../routes.yaml")
 const controllers = path.join(__dirname, "./controllers")
 
 const [app, metricsApp] = initApps([
   logger(),
   bodyParser(),
-  json({ pretty: false, param: "pretty", spaces: 4 }),
+  json({ pretty: false, param: "pretty", spaces: 2 }),
   koaRouter(routes, controllers),
 ])
 
