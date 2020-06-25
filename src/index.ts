@@ -79,7 +79,7 @@ export const initApps = (middleware: Koa.Middleware[]): Koa[] => {
   app.use(
     require("koa-static-server")({
       rootDir: process.env.STATIC_DIR || `./dist/${pkg.name}`,
-      rootPath: process.env.ROOT_PATH || "/",
+      rootPath: process.env.STATIC_PATH || "/",
     }),
   )
   return [app, metricsApp]
