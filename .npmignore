@@ -2,3 +2,13 @@ node_modules
 src
 tests
 koa-template-master*
+.prettierrc.js
+tsconfig.json
+tslint.json
+Dockerfile
+docker-compose.*
+.editorconfig
+types
+.bumpversion.cfg
+.eslintrc.js
+yarn.lock
