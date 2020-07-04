@@ -81,6 +81,7 @@ export const koaRouter = (routesPath: string = "./routes.yaml", controllersPath?
             const callUrl = axios({
               method: m.toLowerCase(),
               url: r.proxy.url,
+              data: ctx.request.body,
               headers: ctx.request.header,
             })
             const response = await callUrl
@@ -95,6 +96,7 @@ export const koaRouter = (routesPath: string = "./routes.yaml", controllersPath?
             const callUrl = axios({
               method: m.toLowerCase(),
               url: r.proxy.url,
+              data: ctx.request.body,
               headers: ctx.request.header,
             })
             const response = await callUrl
@@ -109,6 +111,7 @@ export const koaRouter = (routesPath: string = "./routes.yaml", controllersPath?
             const callUrl = axios({
               method: m.toLowerCase(),
               url: r.proxy.url,
+              data: ctx.request.body,
               headers: ctx.request.header,
             })
             const response = await callUrl
