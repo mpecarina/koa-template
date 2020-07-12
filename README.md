@@ -9,24 +9,23 @@ yarn add @mpecarina/koa-template
 ### import and use:
 
 ```js
-import { initApps, logger, bodyParser, json, koaRouter } from "@mpecarina/koa-template"
+import { initApps, logger, bodyParser, json, koaRouter } from "@nx/koa-template"
 import path from "path"
 
-process.env.STATIC_DIR = path.join(__dirname, "../static")
-process.env.STATIC_PATH = "/"
+const { NODE_ENV, APP_PORT_0, APP_PORT_1 } = process.env
 
-const routes = path.join(__dirname, "../routes.yaml")
-const controllers = path.join(__dirname, "./controllers")
+const healthControllers = path.join(__dirname, "../node_modules/@mpecarina/koa-template/dist/controllers")
+const healthRoutes = path.join(__dirname, "../node_modules/@mpecarina/koa-template/dist/routes.yaml")
 
 const [app, metricsApp] = initApps([
   logger(),
   bodyParser(),
   json({ pretty: false, param: "pretty", spaces: 2 }),
-  koaRouter(routes, controllers),
+  koaRouter(healthRoutes, healthControllers),
 ])
 
-app.listen(process.env.APP_PORT_0 || 3000)
-metricsApp.listen(process.env.APP_PORT_1 || 3001)
+app.listen(APP_PORT_0 || 3000)
+metricsApp.listen(APP_PORT_1 || 3001)
 ```
 
 ### serve static files
@@ -35,7 +34,7 @@ static files are served at `"/"` from the directory `"dist/${pkg.name}"` where `
 
 ### create routes.json
 
-a health check endpoint is enabled for static servers by default at `/ping` when no `routes.json` file is present but can be recreated with additional routes by creating a `routes.json` file in the root of your package
+a health check endpoint is enabled for static servers by default at `/health/ping` when no `routes.json` file is present but can be recreated with additional routes by creating a `routes.json` file in the root of your package
 
 ```json
 [
@@ -51,7 +50,7 @@ a health check endpoint is enabled for static servers by default at `/ping` when
     },
     "description": "",
     "method": ["get"],
-    "route": "/ping",
+    "route": "/health/ping",
     "handler": "ping",
     "auth": {
       "ldap": false,
@@ -95,13 +94,13 @@ export const test = async (ctx: BaseContext) => {
 }
 ```
 
-curl http://localhost:3000/ping
+curl http://localhost:3000/health/ping
 
 ```sh
 {"msg":"pong","status":"success"}
 ```
 
-curl http://localhost:3000/ping?pretty
+curl http://localhost:3000/health/ping?pretty
 
 ```sh
 {
@@ -197,7 +196,7 @@ optionally create routes in yaml file `routes.yaml` or `routes.yml`
   description: ""
   method:
     - get
-  route: "/ping"
+  route: "/health/ping"
   handler: ping
   auth:
     ldap: false
