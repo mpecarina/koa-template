@@ -1,7 +1,10 @@
+/* eslint-disable no-unused-vars */
 import axios from "axios"
 import { readFileSync } from "fs"
+import { BaseContext } from "koa"
 import Router from "koa-router"
 import yaml from "js-yaml"
+import { generateAuthUrl } from "./oauth"
 
 /**
  * Ignore certificate errors.
@@ -32,8 +35,53 @@ export const loadYAML = (pkgPath: string): any => {
 }
 
 /**
+ * Execute common proxy logic.
+ * @param {any} r Route object from parsed routes.yaml file.
+ * @param {any} method Method string.
+ * @param {BaseContext|any} ctx Koa context object.
+ * @returns {Promise<any>} Axios call response.
+ */
+const opaqueProxy = async (r: any, method: any, ctx: BaseContext | any): Promise<any> => {
+  if (r.auth.sso && !ctx.session.isAuthenticated) {
+    ctx.status = 403
+    ctx.body = { status: "error", msg: "unauthorized user" }
+  } else {
+    const urlPath = `${r.proxy.url}${ctx.request.url}`
+    const m = method.toLowerCase()
+    let axiosCall: Promise<any>
+    if (m === "get" || m === "delete") {
+      axiosCall = axios({
+        headers: ctx.request.header,
+        method: m.toLowerCase(),
+        url: urlPath,
+      })
+    } else {
+      axiosCall = axios({
+        method: method.toLowerCase(),
+        url: urlPath,
+        data: ctx.request.body,
+        headers: ctx.request.header,
+      })
+    }
+    const response = await axiosCall
+    if (r.proxy.filter?.enabled) {
+      r.proxy.filter.fields.forEach((field: string) => {
+        const rewriteResponseField = response.data[field]
+        if (rewriteResponseField) {
+          if (rewriteResponseField.includes(r.proxy.filter.key)) {
+            response.data[field] = rewriteResponseField.replace(r.proxy.filter.key, r.proxy.filter.value)
+          }
+        }
+      })
+    }
+    return response.data
+  }
+}
+
+/**
  * Loads Koa routes from JSON description.
- * @param routesPath Path to routes file.
+ * @param {string} routesPath Path to routes file.
+ * @param {string} controllersPath Path to routes file.
  * @returns {Koa.Middleware} Koa router middleware.
  */
 export const koaRouter = (routesPath: string = "./routes.yaml", controllersPath?: string): Router.IMiddleware => {
@@ -46,7 +94,7 @@ export const koaRouter = (routesPath: string = "./routes.yaml", controllersPath?
     }
   } catch (err) {
     if (err.code === "ENOENT") {
-      routes = loadJSON("./node_modules/@mpecarina/koa-template/routes.json")
+      routes = loadJSON("./node_modules/@nx/koa-template/routes.json")
     } else {
       throw err
     }
@@ -60,17 +108,15 @@ export const koaRouter = (routesPath: string = "./routes.yaml", controllersPath?
       if (m.match("get", "i")) {
         if (r.proxy.enabled && r.proxy.redirect) {
           router.get(r.route, (ctx: any) => {
-            ctx.redirect(r.proxy.url)
+            if (r.auth.sso && !ctx.session.isAuthenticated) {
+              ctx.redirect(generateAuthUrl())
+            } else {
+              ctx.redirect(`${r.proxy.url}${ctx.request.url}`)
+            }
           })
         } else if (r.proxy.enabled && !r.proxy.redirect) {
           router.get(r.route, async (ctx: any) => {
-            const callUrl = axios({
-              method: m.toLowerCase(),
-              url: r.proxy.url,
-              headers: ctx.request.header,
-            })
-            const response = await callUrl
-            ctx.body = response.data
+            ctx.body = await opaqueProxy(r, m, ctx)
           })
         } else {
           router.get(r.route, handler)
@@ -78,14 +124,7 @@ export const koaRouter = (routesPath: string = "./routes.yaml", controllersPath?
       } else if (m.match("post", "i")) {
         if (r.proxy.enabled && !r.proxy.redirect) {
           router.post(r.route, async (ctx: any) => {
-            const callUrl = axios({
-              method: m.toLowerCase(),
-              url: r.proxy.url,
-              data: ctx.request.body,
-              headers: ctx.request.header,
-            })
-            const response = await callUrl
-            ctx.body = response.data
+            ctx.body = await opaqueProxy(r, m, ctx)
           })
         } else {
           router.post(r.route, handler)
@@ -93,14 +132,7 @@ export const koaRouter = (routesPath: string = "./routes.yaml", controllersPath?
       } else if (m.match("put", "i")) {
         if (r.proxy.enabled && !r.proxy.redirect) {
           router.put(r.route, async (ctx: any) => {
-            const callUrl = axios({
-              method: m.toLowerCase(),
-              url: r.proxy.url,
-              data: ctx.request.body,
-              headers: ctx.request.header,
-            })
-            const response = await callUrl
-            ctx.body = response.data
+            ctx.body = await opaqueProxy(r, m, ctx)
           })
         } else {
           router.put(r.route, handler)
@@ -108,14 +140,7 @@ export const koaRouter = (routesPath: string = "./routes.yaml", controllersPath?
       } else if (m.match("patch", "i")) {
         if (r.proxy.enabled && !r.proxy.redirect) {
           router.patch(r.route, async (ctx: any) => {
-            const callUrl = axios({
-              method: m.toLowerCase(),
-              url: r.proxy.url,
-              data: ctx.request.body,
-              headers: ctx.request.header,
-            })
-            const response = await callUrl
-            ctx.body = response.data
+            ctx.body = await opaqueProxy(r, m, ctx)
           })
         } else {
           router.patch(r.route, handler)
@@ -123,13 +148,7 @@ export const koaRouter = (routesPath: string = "./routes.yaml", controllersPath?
       } else if (m.match("delete", "i")) {
         if (r.proxy.enabled && !r.proxy.redirect) {
           router.delete(r.route, async (ctx: any) => {
-            const callUrl = axios({
-              method: m.toLowerCase(),
-              url: r.proxy.url,
-              headers: ctx.request.header,
-            })
-            const response = await callUrl
-            ctx.body = response.data
+            ctx.body = await opaqueProxy(r, m, ctx)
           })
         } else {
           router.delete(r.route, handler)

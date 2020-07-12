@@ -8,7 +8,7 @@ tslint.json
 Dockerfile
 docker-compose.*
 .editorconfig
-types
 .bumpversion.cfg
 .eslintrc.js
 yarn.lock
+auth*.json

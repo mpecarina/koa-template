@@ -2,5 +2,5 @@
 import { BaseContext } from "koa"
 
 export const ping = async (ctx: BaseContext) => {
-  ctx.body = { msg: "pong", status: "success" }
+  ctx.body = { status: "success", msg: "pong" }
 }

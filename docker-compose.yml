@@ -1,6 +1,7 @@
 version: "3.7"
 services:
   nodejs:
+    restart: always
     build: .
     ports:
       - 3000:3000
@@ -8,12 +9,38 @@ services:
     volumes:
       - ./:/koa-template
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=test
+      - STORE_TOKEN=true
+      - SECRET_KEY=local-dev-cookie
+      - SERVICE_ACCOUNT_JSON=/koa-template/auth-example.json
+      - GATEWAY_KEY_PATH=/koa-template/auth-gateway-credentials.json
       - APP_NAME=koa-template
       - APP_PORT_0=3000
       - APP_PORT_1=3001
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - PGPASSWORD=password
+      - STATIC_DIR=
+      - STATIC_PATH
+      - SECRET_KEY=co0k13s
+      - NOT_FOUND_FILE=index.html
     working_dir: /koa-template
+    links:
+      - postgres
     command: >
       sh -c "yarn &&
       yarn build &&
+      yarn mock &&
       yarn dev"
+
+  postgres:
+    image: postgres:latest
+    ports:
+      - ${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}
+    environment:
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_DB=${DB_NAME:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-password}

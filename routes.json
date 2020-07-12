@@ -11,7 +11,7 @@
     "version": "v1",
     "description": "",
     "method": ["get"],
-    "route": "/ping",
+    "route": "/health/ping",
     "handler": "ping",
     "auth": {
       "ldap": false,

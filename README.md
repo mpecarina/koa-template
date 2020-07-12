@@ -16,7 +16,7 @@ process.env.STATIC_DIR = path.join(__dirname, "../static")
 process.env.STATIC_PATH = "/"
 
 const routes = path.join(__dirname, "../routes.yaml")
-const controllers = path.join(__dirname, "../node_modules/@mpecarina/koa-template/dist/controllers")
+const controllers = path.join(__dirname, "./controllers")
 
 const [app, metricsApp] = initApps([
   logger(),
