@@ -68,8 +68,10 @@ const opaqueProxy = async (r: any, method: any, ctx: BaseContext | any): Promise
       r.proxy.filter.fields.forEach((field: string) => {
         const rewriteResponseField = response.data[field]
         if (rewriteResponseField) {
-          if (rewriteResponseField.includes(r.proxy.filter.key)) {
-            response.data[field] = rewriteResponseField.replace(r.proxy.filter.key, r.proxy.filter.value)
+          const key = r.proxy.filter.find
+          const val = r.proxy.filter.replace
+          if (key && val && rewriteResponseField.includes(key)) {
+            response.data[field] = rewriteResponseField.replace(key, val)
           }
         }
       })
@@ -94,7 +96,7 @@ export const koaRouter = (routesPath: string = "./routes.yaml", controllersPath?
     }
   } catch (err) {
     if (err.code === "ENOENT") {
-      routes = loadJSON("./node_modules/@nx/koa-template/routes.json")
+      routes = loadJSON("./node_modules/@mpecarina/koa-template/routes.json")
     } else {
       throw err
     }

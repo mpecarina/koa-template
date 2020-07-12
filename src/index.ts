@@ -89,7 +89,7 @@ if (!module.parent) {
       logger(),
       bodyParser(),
       json({ pretty: false, param: "pretty", spaces: 2 }),
-      koaRouter(path.join(__dirname, `../routes.yaml`)),
+      koaRouter(path.join(__dirname, `../routes.yaml`), path.join(__dirname, "./controllers")),
     ])
     app.listen(APP_PORT_0 || 3000)
     metricsApp.listen(APP_PORT_1 || 3001)

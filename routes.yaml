@@ -3,6 +3,9 @@
   proxy:
     filter:
       enabled: false
+      find: ""
+      replace: ""
+      fields: []
     enabled: false
     redirect: false
     url: ""
@@ -14,4 +17,24 @@
   handler: ping
   auth:
     ldap: false
+    sso: false
+
+- name: postman-echo
+  controller: ""
+  proxy:
+    filter:
+      enabled: true
+      find: "https://localhost"
+      replace: "http://localhost:3000"
+      fields:
+        - url
+    enabled: true
+    redirect: false
+    url: https://postman-echo.com
+  description: ""
+  method:
+    - get
+  route: "/get:path*"
+  handler: ""
+  auth:
     sso: false

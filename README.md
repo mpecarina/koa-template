@@ -30,56 +30,7 @@ metricsApp.listen(APP_PORT_1 || 3001)
 
 ### serve static files
 
-static files are served at `"/"` from the directory `"dist/${pkg.name}"` where `pkg.name` is the name value in package.json. in this example we override to the root of our repo in the `static` folder
-
-### create routes.json
-
-a health check endpoint is enabled for static servers by default at `/health/ping` when no `routes.json` file is present but can be recreated with additional routes by creating a `routes.json` file in the root of your package
-
-```json
-[
-  {
-    "name": "health-check",
-    "controller": "health-check",
-    "version": "v1",
-    "proxy": {
-      "enabled": false,
-      "redirect": false,
-      "url": "",
-      "headers": []
-    },
-    "description": "",
-    "method": ["get"],
-    "route": "/health/ping",
-    "handler": "ping",
-    "auth": {
-      "ldap": false,
-      "sso": false
-    }
-  },
-  {
-    "name": "test",
-    "controller": "health-check",
-    "version": "v1",
-    "proxy": {
-      "enabled": false,
-      "redirect": false,
-      "url": "",
-      "headers": []
-    },
-    "description": "",
-    "method": ["get"],
-    "route": "/test",
-    "handler": "test",
-    "auth": {
-      "ldap": false,
-      "sso": false
-    }
-  }
-]
-```
-
-create a function matching the controller and handler values in `routes.json`. for this example bother handlers are in the controllers file `controllers/health-check.ts`
+static files are served at the static path `"/"` from the static directory of `"dist/${pkg.name}"` by default. this can be overridden with the environment variables `STATIC_PATH` and `STATIC_DIR`.
 
 ```js
 /* eslint-disable no-unused-vars */
@@ -109,57 +60,6 @@ curl http://localhost:3000/health/ping?pretty
 }
 ```
 
-### proxy downstream requests
-
-enable the proxy section for a route in `routes.json` and enter the url destination. kibana is an example transparent redirection while the postman example endpoint is set to `redirect: false`
-
-```json
-[
-  {
-    "name": "kibana",
-    "controller": "",
-    "version": "v1",
-    "proxy": {
-      "enabled": true,
-      "redirect": true,
-      "url": "http://kibana:5601",
-      "headers": []
-    },
-    "description": "",
-    "method": ["get"],
-    "route": "/kibana",
-    "handler": "",
-    "auth": {
-      "ldap": false,
-      "sso": false
-    }
-  },
-  {
-    "name": "postman",
-    "controller": "",
-    "version": "v1",
-    "proxy": {
-      "enabled": true,
-      "redirect": false,
-      "url": "https://postman-echo.com/get?foo1=bar1&foo2=bar2",
-      "headers": []
-    },
-    "description": "",
-    "method": ["get"],
-    "route": "/postman",
-    "handler": "",
-    "auth": {
-      "ldap": false,
-      "sso": false
-    }
-  }
-]
-```
-
-### proxy downstream requests
-
-enable the proxy section for a route in `routes.json` and enter the url destination. kibana is an example transparent redirection while the postman example endpoint is set to `redirect: false`
-
 ## access static files
 
 create a static folder and `index.html` file at `static/index.html`
@@ -180,11 +80,32 @@ http://localhost:3000/
 
 http://localhost:3000/index.html
 
-## koa-template also supports yaml
+### proxy downstream requests
 
-optionally create routes in yaml file `routes.yaml` or `routes.yml`
+enable the proxy section for a route in `routes.yaml` and enter the url destination. kibana is an example transparent redirection while the postman example endpoint is set to `redirect: false` and rewrites the string `https://localhost` to `http://localhost:3000` within the url field of the json response body
 
 ```yaml
+
+- name: postman-echo
+  controller: ""
+  proxy:
+    filter:
+      enabled: true
+      find: "https://localhost"
+      replace: "http://localhost:3000"
+      fields:
+        - url
+    enabled: true
+    redirect: false
+    url: https://postman-echo.com
+  description: ""
+  method:
+    - get
+  route: "/get:path*"
+  handler: ""
+  auth:
+    sso: false
+
 - name: health-check
   controller: health-check
   version: v1
@@ -206,14 +127,12 @@ optionally create routes in yaml file `routes.yaml` or `routes.yml`
   controller: health-check
   version: v1
   proxy:
-    enabled: false
-    redirect: false
-    url: ""
-    headers: []
+    filter:
+      enabled: false
   description: ""
   method:
     - get
-  route: "/test"
+  route: "/health/test"
   handler: test
   auth:
     ldap: false
@@ -231,23 +150,6 @@ optionally create routes in yaml file `routes.yaml` or `routes.yml`
   method:
     - get
   route: "/kibana"
-  handler: ""
-  auth:
-    ldap: false
-    sso: false
-
-- name: postman
-  controller: ""
-  version: v1
-  proxy:
-    enabled: true
-    redirect: false
-    url: https://postman-echo.com/get?foo1=bar1&foo2=bar2
-    headers: []
-  description: ""
-  method:
-    - get
-  route: "/postman"
   handler: ""
   auth:
     ldap: false
