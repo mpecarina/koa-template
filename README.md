@@ -9,7 +9,7 @@ yarn add @mpecarina/koa-template
 ### import and use:
 
 ```js
-import { initApps, logger, bodyParser, json, koaRouter } from "@nx/koa-template"
+import { initApps, logger, bodyParser, json, koaRouter } from "@mpecarina/koa-template"
 import path from "path"
 
 const { NODE_ENV, APP_PORT_0, APP_PORT_1 } = process.env
