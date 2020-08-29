@@ -1,4 +1,4 @@
-from: koa-template:latest
+from: mpecarina/koa-template:latest
 workDir: /koa-template
 services:
   - postgres:
