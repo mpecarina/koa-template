@@ -1,21 +1,30 @@
 [
   {
-    "name": "health-check",
-    "controller": "health-check",
-    "proxy": {
-      "enabled": false,
-      "redirect": false,
-      "url": "",
-      "headers": []
-    },
-    "version": "v1",
-    "description": "",
-    "method": ["get"],
-    "route": "/health/ping",
-    "handler": "ping",
-    "auth": {
-      "ldap": false,
-      "sso": false
-    }
+     "name": "health-check",
+     "version": "v1",
+     "description": "",
+     "controller": "health-check",
+     "handler": "ping",
+     "routes": [
+        "/health/ping"
+     ],
+     "method": [
+        "get"
+     ],
+     "auth": {
+        "sso": false
+     },
+     "proxy": {
+        "enabled": false,
+        "raw": true,
+        "redirect": false,
+        "url": "",
+        "filter": {
+           "enabled": false,
+           "find": "",
+           "replace": "",
+           "fields": []
+        }
+     }
   }
 ]

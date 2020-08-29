@@ -1,21 +1,47 @@
 - name: health-check
-  controller: health-check
-  proxy:
-    filter:
-      enabled: false
-      find: ""
-      replace: ""
-      fields: []
-    enabled: false
-    redirect: false
-    url: ""
-  version: v1
-  description: ""
+  controller: "health-check"
+  handler: "ping"
+  routes:
+    - "/health/ping"
   method:
     - get
-  route: "/health/ping"
-  handler: ping
   auth:
-    ldap: false
     sso: false
+  proxy:
+    enabled: false
 
+- name: sso-logout
+  controller: "sso"
+  handler: "logout"
+  routes:
+    - "/sso/logout"
+  method:
+    - get
+  auth:
+    sso: false
+  proxy:
+    enabled: false
+
+- name: sso-code
+  controller: "sso"
+  handler: "code"
+  routes:
+    - "/sso/code"
+  method:
+    - get
+  auth:
+    sso: false
+  proxy:
+    enabled: false
+
+- name: sso-status
+  controller: "sso"
+  handler: "status"
+  routes:
+    - "/sso/status"
+  method:
+    - get
+  auth:
+    sso: false
+  proxy:
+    enabled: false

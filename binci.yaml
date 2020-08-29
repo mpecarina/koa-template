@@ -1,0 +1,46 @@
+from: koa-template:latest
+workDir: /koa-template
+services:
+  - postgres:
+      from: postgres:latest
+      env:
+        - POSTGRES_USER=${DB_USER:-postgres}
+        - POSTGRES_DB=${DB_NAME:-postgres}
+        - POSTGRES_PASSWORD=${DB_PASSWORD:-password}
+      expose:
+        - ${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}
+env:
+  - APP_VERSION=${APP_VERSION:-0.0.0}
+  # - STATIC_DIR=./static
+  - STATIC_PATH="false"
+  # - NOT_FOUND_FILE=index.html
+  - NODE_ENV=test
+  - APP_NAME=koa-template
+  - APP_PORT_0=3000
+  - APP_PORT_1=3001
+  # - TOKEN_PATH=/koa-template/token.json
+  # - REFRESH_TOKEN=temporary-refresh-token
+  # - IMPERSONATE_USER_EMAIL=ldapbind@example.com
+  # - STORE_TOKEN=true
+  - SECRET_KEY=co0k13co0k13s
+  # - SERVICE_ACCOUNT_JSON=/koa-template/auth-svc-acct.json
+  # - GATEWAY_KEY_PATH=/koa-template/auth-gw-creds.json
+  # - DB_PORT=5432
+  # - DB_NAME=postgres
+  # - DB_USER=postgres
+  # - DB_PASSWORD=password
+  # - PGPASSWORD=password
+expose:
+  - ${APP_PORT_0:-3000}:${APP_PORT_0:-3000}
+  - ${APP_PORT_1:-3001}:${APP_PORT_1:-3001}
+# before: |
+#   sleep 3
+#   export DB_HOST=${POSTGRES_PORT_5432_TCP_ADDR}
+#   yarn --cwd /${APP_NAME:-koa-template} mock
+tasks:
+  env: env | sort
+  build: yarn
+  shell: /bin/sh
+  mock: yarn --cwd /${APP_NAME:-koa-template} mock
+  test: yarn --cwd /${APP_NAME:-koa-template} test
+  dev: yarn --cwd /${APP_NAME:-koa-template} dev

@@ -9,11 +9,11 @@ services:
     volumes:
       - ./:/koa-template
     environment:
-      - NODE_ENV=test
+      - NODE_ENV=development
       - STORE_TOKEN=true
-      - SECRET_KEY=local-dev-cookie
-      - SERVICE_ACCOUNT_JSON=/koa-template/auth-example.json
-      - GATEWAY_KEY_PATH=/koa-template/auth-gateway-credentials.json
+      - SECRET_KEY=s3cr3tk3y
+      # - SERVICE_ACCOUNT_JSON=/koa-template/auth-devops.json
+      # - GATEWAY_KEY_PATH=/koa-template/auth-gateway-credentials.json
       - APP_NAME=koa-template
       - APP_PORT_0=3000
       - APP_PORT_1=3001
@@ -23,10 +23,10 @@ services:
       - DB_USER=postgres
       - DB_PASSWORD=password
       - PGPASSWORD=password
-      - STATIC_DIR=
-      - STATIC_PATH
+      - STATIC_DIR="/static"
+      - STATIC_PATH="false"
       - SECRET_KEY=co0k13s
-      - NOT_FOUND_FILE=index.html
+      # - NOT_FOUND_FILE=index.html
     working_dir: /koa-template
     links:
       - postgres

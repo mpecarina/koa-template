@@ -3,10 +3,10 @@ import bodyParser from "koa-bodyparser"
 import json from "koa-json"
 import { koaRouter, loadJSON } from "./router"
 import { logger, koaPrometheus } from "./middleware"
-import { inspect } from "util"
 import session from "koa-session"
 import passport from "koa-passport"
 import path from "path"
+import cors from "@koa/cors"
 
 const { STATIC_DIR, STATIC_PATH, SECRET_KEY, APP_PORT_0, APP_PORT_1, NOT_FOUND_FILE } = process.env
 
@@ -31,15 +31,6 @@ try {
 }
 
 /**
- * Inspect nested object properties.
- * @param {object} obj Object to inspect.
- * @returns {string} Recursive properties.
- */
-export const inspectObj = (obj: object): any => {
-  return inspect(obj, { colors: true, depth: null })
-}
-
-/**
  * Initializes the basic and metrics apps.
  * @param {Koa.Middleware[]|null} middleware
  * @returns {Koa[]} Array containing the apps.
@@ -54,8 +45,8 @@ export const initApps = (middleware: Koa.Middleware[]): Koa[] => {
         key: app.keys[0],
         maxAge: 86400000,
         overwrite: true,
-        httpOnly: true,
-        signed: true,
+        httpOnly: false,
+        signed: false,
         rolling: false,
         renew: false,
       },
@@ -64,18 +55,24 @@ export const initApps = (middleware: Koa.Middleware[]): Koa[] => {
   )
   app.use(passport.initialize())
   app.use(passport.session())
+  app.use(cors({ credentials: true }))
   if (middleware) {
     middleware.forEach((m: Koa.Middleware) => {
       app.use(m)
     })
   }
-  app.use(
-    require("koa-static-server")({
-      rootDir: STATIC_DIR || "./static",
-      rootPath: STATIC_PATH || "/",
-      notFoundFile: NOT_FOUND_FILE || "index.html",
-    }),
-  )
+  const templateRoutes = path.join(__dirname, `../routes.yaml`)
+  const templateControllers = path.join(__dirname, "./controllers")
+  app.use(koaRouter(templateRoutes, templateControllers))
+  if (STATIC_PATH != "false") {
+    app.use(
+      require("koa-static-server")({
+        rootDir: STATIC_DIR || "./static",
+        rootPath: STATIC_PATH || "/",
+        notFoundFile: NOT_FOUND_FILE || "index.html",
+      }),
+    )
+  }
   const metricsApp = new Koa().use(koaPrometheus())
   return [app, metricsApp]
 }
@@ -85,12 +82,7 @@ export const initApps = (middleware: Koa.Middleware[]): Koa[] => {
  */
 if (!module.parent) {
   try {
-    const [app, metricsApp] = initApps([
-      logger(),
-      bodyParser(),
-      json({ pretty: false, param: "pretty", spaces: 2 }),
-      koaRouter(path.join(__dirname, `../routes.yaml`), path.join(__dirname, "./controllers")),
-    ])
+    const [app, metricsApp] = initApps([logger(), bodyParser(), json({ pretty: false, param: "pretty", spaces: 2 })])
     app.listen(APP_PORT_0 || 3000)
     metricsApp.listen(APP_PORT_1 || 3001)
   } catch (err) {

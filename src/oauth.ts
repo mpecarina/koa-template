@@ -7,30 +7,28 @@ import destroyer from "server-destroy"
 import { queryDB } from "./postgres"
 import { google } from "googleapis"
 
-const GATEWAY_KEY_PATH: string = process.env.GATEWAY_KEY_PATH || "/Users/mattp/Downloads/gateway-credentials.json"
-const SERVICE_ACCOUNT_JSON: string = process.env.SERVICE_ACCOUNT_JSON || "/Users/mattp/Downloads/example.json"
+const GATEWAY_KEY_PATH: string = process.env.GATEWAY_KEY_PATH || ""
+const SERVICE_ACCOUNT_JSON: string = process.env.SERVICE_ACCOUNT_JSON || ""
 const TOKEN_PATH: string = process.env.TOKEN_PATH || "token.json"
-const REFRESH_TOKEN: string = process.env.REFRESH_TOKEN || "example-refresh-token"
-const NODE_ENV: string = process.env.NODE_ENV || "test"
-const IMPERSONATE_USER_EMAIL: string = process.env.IMPERSONATE_USER_EMAIL || "ldapbind@example.com"
+const REFRESH_TOKEN: string = process.env.REFRESH_TOKEN || ""
+const NODE_ENV: string = process.env.NODE_ENV || "test-refresh-token"
+const IMPERSONATE_USER_EMAIL: string = process.env.IMPERSONATE_USER_EMAIL || ""
 const STORE_TOKEN: string = process.env.STORE_TOKEN || "false"
 
-export const superAdminsGroupKey = "auth-gcp-super-admins@example.com"
-export const resourceAdminsGroupKey = "auth-gcp-resource-admins@example.com"
-export const dataAdminsGroupKey = "auth-gcp-data-admins@example.com"
-export const dataUsersGroupKey = "auth-gcp-data-users@example.com"
-export const billingAdminsGroupKey = "auth-gcp-billing-admins@example.com"
-export const allUsersGroupKey = "auth-gcp-monitoring@example.com"
-
+export const superAdminsGroupKey: string = process.env.GOOGLE_SUPER_ADMINS || "auth-super-admins@example.com"
 export const SCOPES: string[] = [
   "https://www.googleapis.com/auth/admin.directory.group.readonly",
   "https://www.googleapis.com/auth/userinfo.profile",
   "https://www.googleapis.com/auth/admin.directory.group.member.readonly",
 ]
 
-const keys: { client_id: string; client_secret: string; redirect_uris: string[] } = require(GATEWAY_KEY_PATH)
+const keys: { client_id: string; client_secret: string; redirect_uris: string[] } = GATEWAY_KEY_PATH
+  ? require(GATEWAY_KEY_PATH)
+  : null
 
-export let oAuth2Client: any = new google.auth.OAuth2(keys.client_id, keys.client_secret, keys.redirect_uris[0])
+export let oAuth2Client: any = keys
+  ? new google.auth.OAuth2(keys.client_id, keys.client_secret, keys.redirect_uris[0])
+  : null
 
 google.options({ auth: oAuth2Client })
 
@@ -47,7 +45,7 @@ const authenticateTestServer = async (scopes: string[]) => {
     const server = http
       .createServer(async (req: any, res: any) => {
         try {
-          if (req.url.indexOf("/sso") > -1) {
+          if (req.url.indexOf("/sso/code") > -1) {
             const qs = new url.URL(req.url, "http://localhost:3000").searchParams
             res.end("Authentication successful! Please return to the console.")
             server.destroy()
@@ -69,30 +67,42 @@ const authenticateTestServer = async (scopes: string[]) => {
   })
 }
 
-export const authenticate = async (oAuth2Client: any, code: string) => {
-  const { tokens } = await oAuth2Client.getToken(code)
+export const authenticate = async (ctx: any) => {
+  const { tokens } = await oAuth2Client.getToken(ctx.request.query.code)
   tokens.refresh_token = REFRESH_TOKEN
   oAuth2Client.setCredentials(tokens)
   const userInfo = await getUserInfo(oAuth2Client)
-  const queryStr = `INSERT INTO tokens(google_id, name, data) VALUES('${userInfo.data.id}', '${
-    userInfo.data.name
-  }', '${JSON.stringify(tokens)}')`
-  if (STORE_TOKEN === "true") {
-    try {
-      await queryDB(queryStr)
-    } catch (e) {
-      if (e.message === 'duplicate key value violates unique constraint "tokens_pkey"') {
-        console.log(e.message, "updating existing user")
-        const queryStr = `UPDATE tokens SET name = '${userInfo.data.name}', data = '${JSON.stringify(
-          tokens,
-        )}' WHERE google_id = '${userInfo.data.id}'`
+  const jwtClient = await authenticateServiceAccount(SCOPES)
+  const authorized = await getGroupMembers(jwtClient, superAdminsGroupKey, userInfo)
+  if (authorized?.flat().length > 0) {
+    const host = ctx.request.header.host
+    const url: URL = new URL(`${host}${ctx.request.url}`)
+    const state = url.searchParams.get("state")
+    ctx.session = { isAuthenticated: true, id: userInfo.data.id, name: userInfo.data.name }
+    if (STORE_TOKEN === "true") {
+      try {
+        const queryStr = `INSERT INTO tokens(google_id, name, data, session) VALUES('${userInfo.data.id}', '${
+          userInfo.data.name
+        }', '${JSON.stringify(tokens)}', null)`
         await queryDB(queryStr)
-      } else {
-        console.error(e)
+      } catch (e) {
+        if (e.message === 'duplicate key value violates unique constraint "tokens_pkey"') {
+          console.log(e.message, "updating existing user")
+          const queryStr = `UPDATE tokens SET name = '${userInfo.data.name}', data = '${JSON.stringify(
+            tokens,
+          )}', session = '${JSON.stringify(ctx.session)}' WHERE google_id = '${userInfo.data.id}'`
+          await queryDB(queryStr)
+        }
       }
     }
+    ctx.set("api-gateway-token", tokens.access_token)
+    ctx.set("api-gateway-user-id", userInfo.data.id)
+    console.log(ctx.origin)
+    return ctx.redirect(state)
+  } else {
+    ctx.status = 403
+    return (ctx.body = { status: "error", msg: "unauthorized user, forbidden access" })
   }
-  return oAuth2Client
 }
 
 export const getUserInfo = async (auth: any) => {
@@ -140,12 +150,19 @@ export const authenticateServiceAccount = async (scopes: string[]) => {
   })
 }
 
-export const generateAuthUrl = () => {
-  return oAuth2Client.generateAuthUrl({
-    access_type: "offline",
-    prompt: "select_account",
-    scope: SCOPES,
-  })
+export const generateAuthUrl = (state: string | null = null) => {
+  return state
+    ? oAuth2Client.generateAuthUrl({
+        access_type: "offline",
+        prompt: "select_account",
+        scope: SCOPES,
+        state: state,
+      })
+    : oAuth2Client.generateAuthUrl({
+        access_type: "offline",
+        prompt: "select_account",
+        scope: SCOPES,
+      })
 }
 
 const run = async () => {

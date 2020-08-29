@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 export = index
 declare function index(options?: any): any
 declare namespace index {
