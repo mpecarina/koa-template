@@ -75,6 +75,7 @@ export const loadYAML = (pkgPath: string): any => {
 const opaqueProxy = async (r: any, ctx: BaseContext | any): Promise<any> => {
   const urlPath = `${r.proxy.url}${ctx.request.url}`
   ctx.request.header["api-gateway-request-id"] = uuidv4()
+  ctx.request.header["accept-encoding"] = "gzip"
   if (r.proxy.raw) {
     const lowerPath = urlPath.toLowerCase()
     if (lowerPath.endsWith(".css")) {
