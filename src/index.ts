@@ -64,7 +64,8 @@ export const initApps = (middleware: Koa.Middleware[]): Koa[] => {
   const templateRoutes = path.join(__dirname, `../routes.yaml`)
   const templateControllers = path.join(__dirname, "./controllers")
   app.use(koaRouter(templateRoutes, templateControllers))
-  if (STATIC_PATH != "false") {
+  const staticPath = STATIC_PATH || "false"
+  if (staticPath != "false") {
     app.use(
       require("koa-static-server")({
         rootDir: STATIC_DIR || "./static",
