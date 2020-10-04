@@ -140,7 +140,7 @@ const routeRequest = async (r: any): Promise<any> => {
     if (handler) {
       router.all(r.routes, async (ctx: any, next: any) => {
         try {
-          if (r.auth.sso && !ctx.session.isAuthenticated) {
+          if (r.auth?.sso && !ctx.session.isAuthenticated) {
             const callBackURL = `${ctx.protocol}://${ctx.request.header.host}${ctx.request.url}`
             return ctx.redirect(generateAuthUrl(callBackURL))
           }
@@ -158,7 +158,7 @@ const routeRequest = async (r: any): Promise<any> => {
     if (r.proxy.enabled && r.proxy.redirect) {
       router.all(r.routes, async (ctx: any, next: any) => {
         try {
-          if (r.auth.sso && !ctx.session.isAuthenticated) {
+          if (r.auth?.sso && !ctx.session.isAuthenticated) {
             const callBackURL = `${ctx.protocol}://${ctx.request.header.host}${ctx.request.url}`
             return ctx.redirect(generateAuthUrl(callBackURL))
           }
@@ -176,7 +176,7 @@ const routeRequest = async (r: any): Promise<any> => {
     } else if (r.proxy.enabled && !r.proxy.redirect) {
       router.all(r.routes, async (ctx: any, next: any) => {
         try {
-          if (r.auth.sso && !ctx.session.isAuthenticated) {
+          if (r.auth?.sso && !ctx.session.isAuthenticated) {
             const callBackURL = `${ctx.protocol}://${ctx.request.header.host}${ctx.request.url}`
             return ctx.redirect(generateAuthUrl(callBackURL))
           }
